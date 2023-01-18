@@ -4,6 +4,14 @@ const Todolist = () => {
   const [item, setItem] = useState("");
   const [items, setItems] = useState([]);
   const [completedItems, setCompletedItems] = useState([])
+  const [editingIndex, setEditingIndex] = useState(-1);
+  const [editedItem, setEditedItem] = useState("");
+
+  const handleEdit = (id) => {
+    setEditingIndex(id);
+    setEditedItem(items[id]);
+    
+};
 
   const handleChange = (e) => {
     setItem(e.target.value);
@@ -12,6 +20,7 @@ const Todolist = () => {
   const handlesubmit = (e) => {
     e.preventDefault();
     setItems([...items, item]);
+    
   };
   const handleComplete =(id) =>{
     const newList = items.filter((i,index)=> index ==id)
@@ -32,6 +41,15 @@ const Todolist = () => {
     setCompletedItems([...completedItems, ...items])
     setItems([])
   }
+  const handleSave = (id) => {
+    const updatedItems = [...items];
+    updatedItems[id] = editedItem;
+    setItems(updatedItems);
+    setEditingIndex(-1);
+    setEditedItem("");
+  };
+
+  
   
 
   return (
@@ -64,16 +82,26 @@ const Todolist = () => {
         </h1>
         <hr />
           
-        {items.map((i, index) => (
-        
-          <div  className=" flex flex-row  justify-end" key={index}>
-            <p>{i}</p>
+          {items.map((i, index) => (
+          <div className=" flex flex-row  justify-end" key={index}>
+            {index === editingIndex ? (
+                <div>
+                  <input
+                    type="text"
+                    value={editedItem}
+                    onChange={(e) => setEditedItem(e.target.value)}
+                  />
+                  <button className=" ml-5 border-2 border-black  rounded-lg " onClick={() => handleSave(index)}>Save</button>
+                </div>
+              ) : (
+                <p>{i}</p>
+              )}
+
             <button className=" ml-5 mr-5 border-2 border-black  rounded-lg " onClick={()=>handleComplete(index)}>Complete</button>
             <button className=" border-2 border-black  rounded-lg " onClick={()=>handleDelete(index)}>Delete</button>
+            <button className=" ml-5 border-2 border-black  rounded-lg " onClick = {() => handleEdit(index)}>Edit</button>
           </div>
-          
-          
-          ))}
+        ))}
       </div>
       <div className = ''>
         <h1><b>Completed Task</b></h1>
@@ -86,6 +114,8 @@ const Todolist = () => {
             ))
           }
       </div>
+     
+      
     </div>
 
   );
